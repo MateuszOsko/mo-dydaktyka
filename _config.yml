@@ -1,0 +1,8 @@
+title: MO Classes
+baseurl: "/mo-classes"
+url: "https://mateuszosko.github.io"
+
+collections:
+  courses:
+    output: true
+

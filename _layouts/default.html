@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>MO Classes</title>
+    <link rel="stylesheet" href="{{ '/style.css' | relative_url }}">
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <a href="{{ '/' | relative_url }}">
+            <h1>MO Classes</h1>
+        </a>
+
+        <div class="course">
+            <div class="course-button">
+                STRUKTURY DANYCH PRZESTRZENNYCH
+            </div>
+
+            <div class="course-blocks">
+
+            {% assign structure_courses = site.courses
+                | where: "course_id", "structures"
+                | sort: "order" %}
+
+            {% for course in structure_courses %}
+
+                <a href="{{ course.url | relative_url }}">
+                    {{ course.title }}
+                </a>
+
+            {% endfor %}
+
+            </div>
+        </div>
+
+        <div class="course">
+            ALGORYTMY DANYCH PRZESTRZENNYCH
+        </div>
+    </aside>
+
+    <main>
+        {{ content }}
+    </main>
+
+    <script src="{{ '/script.js' | relative_url }}"></script>
+
+</body>
+</html>
