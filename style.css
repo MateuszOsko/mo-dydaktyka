@@ -31,17 +31,45 @@ body {
             padding-left: 15px;
             height: 52px;
 
-            background: repeating-linear-gradient(45deg,
-                    #303438 0 8px,
-                    #25282b 8px 10px);
+            position: relative;
+            overflow: hidden;
+
+            background: #303438;
 
             border: 1px solid #444;
-            border-left: 4px solid #a855f7;
+            border-left: 4px solid var(--course-color);
 
             color: white;
             cursor: pointer;
 
             transition: 0.2s;
+
+            &::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                width: 50%;
+
+                background: repeating-linear-gradient(-45deg,
+                        transparent 0 8px,
+                        color-mix(in srgb,
+                            var(--course-color) 10%,
+                            transparent) 8px 10px);
+
+                -webkit-mask-image: linear-gradient(to right,
+                        transparent 0%,
+                        black 40%,
+                        black 100%);
+
+                mask-image: linear-gradient(to right,
+                        transparent 0%,
+                        black 40%,
+                        black 100%);
+
+                pointer-events: none;
+            }
 
             .course-icon {
                 width: 32px;
@@ -51,19 +79,52 @@ body {
                 align-items: center;
                 justify-content: center;
 
-                border: 2px solid #a855f7;
+                border: 2px solid var(--course-color);
                 border-radius: 50%;
 
-                color: #a855f7;
+                color: var(--course-color);
                 flex-shrink: 0;
+
+                position: relative;
+
+                &::after {
+                    content: "";
+                    position: absolute;
+
+                    left: 45px;
+                    height: 32px;
+                    width: 1px;
+
+                    background: #555;
+                }
+            }
+
+            span {
+                padding-left: 5px;
+
+                position: relative;
+                z-index: 1;
+
+                font-size: 15px;
+                font-weight: 500;
+                line-height: 1.15;
             }
         }
 
         .course-button:hover {
-            border-left-color: #c084fc;
-            background: repeating-linear-gradient(45deg,
-                    #35303b 0 8px,
-                    #28242c 8px 10px);
+            border-left-color: color-mix(in srgb,
+                    var(--course-color) 80%,
+                    white);
+
+            background: #35303b;
+
+            &::after {
+                background: repeating-linear-gradient(-45deg,
+                        transparent 0 8px,
+                        color-mix(in srgb,
+                            var(--course-color) 14%,
+                            transparent) 8px 10px);
+            }
         }
 
         .course-blocks {
