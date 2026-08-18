@@ -46,15 +46,16 @@ body {
 
             transition:
                 background 0.2s,
-                box-shadow 0.2s,
-                border-left-color 0.2s;
+                box-shadow 0.2s;
 
             &::after {
                 content: "";
+
                 position: absolute;
                 top: 0;
                 right: 0;
                 bottom: 0;
+
                 width: 50%;
 
                 background: repeating-linear-gradient(-45deg,
@@ -84,13 +85,13 @@ body {
                 align-items: center;
                 justify-content: center;
 
+                position: relative;
+                flex-shrink: 0;
+
                 border: 2px solid var(--course-color);
                 border-radius: 50%;
 
                 color: var(--course-color);
-                flex-shrink: 0;
-
-                position: relative;
 
                 &::after {
                     content: "";
@@ -110,7 +111,7 @@ body {
                 position: relative;
                 z-index: 1;
 
-               font-size: 15px;
+                font-size: 15px;
                 font-weight: 500;
                 line-height: 1.15;
             }
@@ -140,6 +141,42 @@ body {
 
         .course-blocks {
             display: none;
+            padding: 8px 0 10px 16px;
+
+            a {
+                display: block;
+
+                margin-bottom: 6px;
+                padding: 7px 10px 7px 16px;
+
+                border-left: 2px solid var(--course-color);
+
+                color: #aaa;
+
+                font-size: 14px;
+                line-height: 1.2;
+
+                text-decoration: none;
+                cursor: pointer;
+
+                transition:
+                    color 0.15s,
+                    background 0.15s;
+            }
+
+            a:hover {
+                color: var(--course-color);
+
+                background: linear-gradient(to right,
+                        transparent 0,
+                        transparent 14px,
+                        color-mix(in srgb,
+                            var(--course-color) 10%,
+                            transparent) 14px,
+                        color-mix(in srgb,
+                            var(--course-color) 10%,
+                            transparent) 100%);
+            }
         }
 
         &.open .course-blocks {
