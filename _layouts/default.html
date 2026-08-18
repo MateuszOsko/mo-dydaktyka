@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pl">
+
 <head>
     <meta charset="UTF-8">
     <title>MO Classes</title>
@@ -10,41 +11,54 @@
 
     <aside class="sidebar">
         <a href="{{ '/' | relative_url }}">
-            <h1>MO Classes</h1>
+            <h1 class="sidebar-title">
+                MO Classes
+            </h1>
         </a>
 
         <div class="course">
             <div class="course-button">
-                STRUKTURY DANYCH PRZESTRZENNYCH
+                <div class="course-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <span>STRUKTURY DANYCH PRZESTRZENNYCH</span>
             </div>
 
             <div class="course-blocks">
 
-            {% assign structure_courses = site.courses
+                {% assign structure_courses = site.courses
                 | where: "course_id", "structures"
                 | sort: "order" %}
 
-            {% for course in structure_courses %}
+                {% for course in structure_courses %}
 
                 <a href="{{ course.url | relative_url }}">
                     {{ course.title }}
                 </a>
 
-            {% endfor %}
+                {% endfor %}
 
             </div>
         </div>
 
         <div class="course">
-            ALGORYTMY DANYCH PRZESTRZENNYCH
+            <div class="course-button">
+                <div class="course-icon">
+                    <i class="fas fa-diagram-project"></i>
+                </div>
+                <span>
+                    ALGORYTMY DANYCH PRZESTRZENNYCH</span>
+            </div>
         </div>
     </aside>
 
-    <main>
+    <main class="main">
         {{ content }}
     </main>
 
     <script src="{{ '/script.js' | relative_url }}"></script>
+    <script src="https://kit.fontawesome.com/fd7273eaac.js" crossorigin="anonymous"></script>
 
 </body>
+
 </html>

@@ -3,39 +3,43 @@ body {
     font-family: Arial, sans-serif;
 }
 
+.main {
+    margin-left: 300px;
+}
+
 .sidebar {
     position: fixed;
     left: 0;
     top: 0;
-
-    width: 240px;
+    width: 260px;
     height: 100vh;
-
-    padding: 20px;
-
     background: #222;
     color: white;
-}
 
-.sidebar h1 {
-    margin-top: 0;
-}
-
-.course {
-    margin-top: 20px;
-    padding: 15px;
-
-    background: #444;
-
-    .course-blocks {
-        display: none;
+    .sidebar-title {
+        padding: 0px 20px;
     }
 
-    &.open .course-blocks {
-        display: block;
-    }
-}
+    .course {
+        margin-top: 20px;
 
-main {
-    margin-left: 300px;
+        .course-button {
+            align-content: center;
+            padding-left: 20px;
+            height: 52px;
+
+            background: repeating-linear-gradient(45deg,
+                    rgba(173, 216, 230, 0.425) 0 8px,
+                    rgba(0, 0, 0, 0.08) 8px 10px);
+            border: 1px rgba(0, 0, 0, 0.08) solid;
+        }
+
+        .course-blocks {
+            display: none;
+        }
+
+        &.open .course-blocks {
+            display: block;
+        }
+    }
 }
