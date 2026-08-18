@@ -24,14 +24,46 @@ body {
         margin-top: 20px;
 
         .course-button {
-            align-content: center;
-            padding-left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+
+            padding-left: 15px;
             height: 52px;
 
             background: repeating-linear-gradient(45deg,
-                    rgba(173, 216, 230, 0.425) 0 8px,
-                    rgba(0, 0, 0, 0.08) 8px 10px);
-            border: 1px rgba(0, 0, 0, 0.08) solid;
+                    #303438 0 8px,
+                    #25282b 8px 10px);
+
+            border: 1px solid #444;
+            border-left: 4px solid #a855f7;
+
+            color: white;
+            cursor: pointer;
+
+            transition: 0.2s;
+
+            .course-icon {
+                width: 32px;
+                height: 32px;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                border: 2px solid #a855f7;
+                border-radius: 50%;
+
+                color: #a855f7;
+                flex-shrink: 0;
+            }
+        }
+
+        .course-button:hover {
+            border-left-color: #c084fc;
+            background: repeating-linear-gradient(45deg,
+                    #35303b 0 8px,
+                    #28242c 8px 10px);
         }
 
         .course-blocks {
