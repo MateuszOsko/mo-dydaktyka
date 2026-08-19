@@ -4,7 +4,16 @@ body {
 }
 
 .main {
-    margin-left: 300px;
+    min-height: 100vh;
+    padding: 0;
+    background: #f0dfc2;
+    color: #292725;
+    line-height: 1.6;
+    overflow: auto;
+
+    .main-content {
+        margin-left: 300px;
+    }
 }
 
 .sidebar {
