@@ -166,16 +166,6 @@ body {
 
             a:hover {
                 color: var(--course-color);
-
-                background: linear-gradient(to right,
-                        transparent 0,
-                        transparent 14px,
-                        color-mix(in srgb,
-                            var(--course-color) 10%,
-                            transparent) 14px,
-                        color-mix(in srgb,
-                            var(--course-color) 10%,
-                            transparent) 100%);
             }
         }
 

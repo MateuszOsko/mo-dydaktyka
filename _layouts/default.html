@@ -46,8 +46,23 @@
                 <div class="course-icon">
                     <i class="fa-solid fa-wave-square"></i>
                 </div>
-                <span>
-                    ALGORYTMY DANYCH PRZESTRZENNYCH</span>
+                <span>ALGORYTMY DANYCH PRZESTRZENNYCH</span>
+            </div>
+
+            <div class="course-blocks">
+
+                {% assign algorithms_courses = site.courses
+                | where: "course_id", "algorithms"
+                | sort: "order" %}
+
+                {% for course in algorithms_courses %}
+
+                <a href="{{ course.url | relative_url }}">
+                    {{ course.title }}
+                </a>
+
+                {% endfor %}
+
             </div>
         </div>
     </aside>

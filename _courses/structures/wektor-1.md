@@ -6,5 +6,3 @@ order: 1
 ---
 
 # Wektor 1
-
-Treść tego bloku pojawi się tutaj.
