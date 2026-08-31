@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Raster 1
+title: Wstęp - Pandas
 course_id: structures
-order: 5
+order: 3
 ---
 
-# Raster 1
+. . .

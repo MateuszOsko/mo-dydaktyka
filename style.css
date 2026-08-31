@@ -13,6 +13,38 @@ body {
 
     .main-content {
         margin-left: 300px;
+        padding: 30px 35px;
+        counter-reset: questions;
+    }
+
+    .main-content pre {
+        padding: 16px;
+        overflow-x: auto;
+
+        background: #282c34;
+        color: #abb2bf;
+
+        border-radius: 8px;
+
+        font-family: Consolas, "Liberation Mono", monospace;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .main-content pre code {
+        background: none;
+        padding: 0;
+    }
+
+    .main-content > ol:not([type]) {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .main-content > ol:not([type]) > li::before {
+        counter-increment: questions;
+        content: counter(questions) ". ";
+        font-weight: bold;
     }
 }
 

@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Wektor 4
+title: Wstęp - Stworzenie VectorTools
 course_id: structures
 order: 4
 ---
 
-# Wektor 4
+. . .
