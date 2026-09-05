@@ -1,4 +1,4 @@
 ---
 layout: default
-title: MO Classes
+title: MO Dydaktyka
 ---
