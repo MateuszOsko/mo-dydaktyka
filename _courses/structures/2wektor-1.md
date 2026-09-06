@@ -199,3 +199,215 @@ print(f"Ilość rzek o zadeklarowanej długości ponad 4000 km w zbiorze: {river
 
 **6. Rozbudowa VectorTools:**
 
+Do naszego programu dodamy 3 nowe funkcjonalności, bazujące na zdobytych umiejętnościach w tej sekcji kursu. Będzie to:
+* Wczytywanie warstwy
+* Wyświetlanie warstwy
+* Odczytywanie informacji o warstwie
+
+Jak zawsze, VectorTools możecie budować zgodnie z waszym pomysłem. Poniżej przedstawiam jedynie propozycję implementacji:
+
+**Wczytanie warstwy:**
+
+Nasza funkcja wczytywania warstwy powinna pytać użytkownika o podanie ścieżki do pliku, a następnie próbować go otworzyć za pomocą GeoPandas.
+Jeśli to się uda, załadowany plik powinien zostać zapamiętany i udostępniony pozostałym częściom programu. Jeśli nie – powinniśmy pokazać komunikat o błędzie.
+
+Nowa funkcja (w nowym pliku wewnątrz folderu /menu_operations/ )
+```python
+import geopandas as gpd
+from tkinter import filedialog, messagebox
+
+from src.data_service import set_layer
+
+
+def load_data_and_remember_outcome():
+    layer = load_data()
+    set_layer(layer)
+    
+
+def load_data():
+    path = filedialog.askopenfilename(
+        title="Wybierz warstwę"
+    )
+
+    if not path:
+        return None
+
+    try:
+        layer = gpd.read_file(path)
+    except Exception:
+        messagebox.showwarning(
+            "Błąd wczytywania",
+            "Nie udało się wczytać wybranego pliku.\n"
+            "Upewnij się, że jest to prawidłowy plik GIS."
+        )
+        return None
+
+    return layer
+
+```
+
+Od razu rzuca się w oczy to, że load_data opakowana jest w load_data_and_remember_outcome. Jest to funkcja z nowe pliku, data_service:
+
+```python
+_layer = None
+
+def set_layer(layer_to_remember):
+    global _layer
+    _layer = layer_to_remember
+
+def get_layer():
+    return _layer
+```
+
+Który zapisuje nam warstwę w pamięci i pozwala potem na jej odpytywanie przez inne fragmenty naszego programu, za pomocą prostej struktury GET+SET.
+
+To właśnie load_data_and_remember_outcome() będzie odpytywana przez odświeżone app.py:
+
+```python
+from src.create_window import create_window
+from src.create_menu_option import create_menu_option
+from src.menu_operations.close_program import close_program
+from src.menu_operations.load_data import load_data_and_remember_outcome
+from src.data_service import get_layer
+
+def update_menu():
+    canvas.delete("layer_status")
+
+    if get_layer() is not None:
+        canvas.create_text(
+            180,
+            380,
+            text="PLIK ZAŁADOWANY PRAWIDŁOWO",
+            fill="green",
+            tags="layer_status"
+        )
+
+window, canvas = create_window()
+
+create_menu_option(canvas, 465, "Wczytaj warstwę", lambda: load_data_and_remember_outcome(), lambda: update_menu())
+create_menu_option(canvas, 500, "Zamknij program", lambda: close_program(window))
+
+window.mainloop()
+```
+
+Zauważmy że teraz przycisięnicie napisu "Wczytaj warstwę" wywołuje nie 1, a 2 funkcje. Pierwsza to wczytanie warstwy, druga - update widoku menu. Jeśli warstwa prawidłowo została załadowana, dodajemy zielony tekst PLIK ZAŁADOWANY PRAWIDŁOWO.
+
+Wymaga to od nas jeszcze jeden drobnej zmiany. W create_menu_options.py , zmieniamy deklarację argumentów na:
+```python
+def create_menu_option(
+    canvas: tk.Canvas,
+    height: int,
+    text: str,
+    *operations: Callable
+```
+A poniżej zamiast operation():
+```python
+    canvas.tag_bind(
+        text_id,
+        "<Button-1>",
+        lambda event: [operation() for operation in operations]
+    )
+```
+
+Po tych zmianach mamy już prawidłowo zbudowany program pozwalający wczytywać dane wektorowe.
+
+**Dodanie wyświetlania warstwy oraz informacji o niej**
+
+Dodajemy 2 nowe operacje:
+
+Show layer:
+```python
+import matplotlib.pyplot as plt
+
+from src.data_service import get_layer
+
+
+def show_layer():
+    layer = get_layer()
+
+    if layer is None:
+        return
+
+    layer.plot()
+    plt.show()
+```
+
+Show layer info:
+```python
+from tkinter import messagebox
+
+from src.data_service import get_layer
+
+def show_layer_info():
+    layer = get_layer()
+
+    if layer is None:
+        return
+
+    info = (
+        f"Liczba obiektów: {len(layer)}\n"
+        f"Liczba kolumn: {len(layer.columns)}\n"
+        f"Typ geometrii: {', '.join(layer.geom_type.unique())}\n"
+        f"Układ współrzędnych: {layer.crs}"
+    )
+
+    messagebox.showinfo(
+        "Informacje o warstwie",
+        info
+    )
+
+```
+
+Oraz deklarujemy je w app.py:
+
+```python
+create_menu_option(canvas, 400, "Wyświetl warstwę", lambda: show_layer())
+create_menu_option(canvas, 435, "Wyświetl informacje o warstwie", lambda: show_layer_info())
+
+```
+
+Przy okazji w przypadku aplikacji pokazowej konieczne okazała się ręczna zmiana wysokości elementów, by mieściły się one w okne - takie rzeczy w przyszłości nasz program powinien móc obliczać samemu, ale na razie zostawmy to w ten sposób.
+
+Jedyną dodatkową zmianą jaką należało by zrobić jest przeniesienie metody update_menu() do osobnego pliku,
+update_menu.py:
+
+```python
+from src.data_service import get_layer
+
+def update_menu(canvas):
+    canvas.delete("layer_status")
+
+    if get_layer() is not None:
+        canvas.create_text(
+            180,
+            280,
+            text="PLIK ZAŁADOWANY PRAWIDŁOWO",
+            fill="green",
+            tags="layer_status"
+        )
+```
+
+A nasz app.py ponownie odchudzamy do:
+
+```python
+from src.create_window import create_window
+from src.create_menu_option import create_menu_option
+from src.update_menu import update_menu
+from src.menu_operations.close_program import close_program
+from src.menu_operations.load_data import load_data_and_remember_outcome
+from src.menu_operations.show_layer import show_layer
+from src.menu_operations.show_layer_info import show_layer_info
+
+
+window, canvas = create_window()
+
+create_menu_option(canvas, 365, "Wczytaj warstwę", lambda: load_data_and_remember_outcome(), lambda: update_menu(canvas))
+create_menu_option(canvas, 400, "Wyświetl warstwę", lambda: show_layer())
+create_menu_option(canvas, 435, "Wyświetl informacje o warstwie", lambda: show_layer_info())
+create_menu_option(canvas, 470, "Zamknij program", lambda: close_program(window))
+
+window.mainloop()
+```
+
+Na tym etapie wszystkie operacje są dostępne niezależnie od tego czy warstwa została wczytana. Funkcje są zabezpieczone i sprawdzają czy warstwa istnieje, zanim spróbują na niej operować, jest to jednak pewna niedoskonałość.
+W przyszłości możemy wykorzystać przechowywany stan aplikacji do dynamicznego budowania menu.
