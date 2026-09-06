@@ -140,9 +140,62 @@ subGdf.plot()
 
 **4. Jak filtrować dane?**
 
+Filtrowanie danych w GeoPandas może mieć charakter przestrzenny jak i nieprzestrzenny. Na ten moment skupmy się na nieprzestrzennym - analogicznie jak w zwykłym Pandas, używając warunków przeszukajmy dane odpowiadając na zadane pytania:
+
+```python
+# Wyfiltrujmy tylko te wulkany, których nazwa zaczyna się od litery "E" a następnie obliczmy jaki jest to % wszystkich wulkanów
+
+vulcans_E = vulcans[ vulcans["nazwa"].str.startswith("E") ] # Co zwraca samo vulcans["nazwa"].str.startswith("E") ?
+print(vulcans_E.head())
+
+vulcans_count = len(vulcans)
+vulcans_E_count = len(vulcans_E)
+result = ( vulcans_E_count * 100 ) / vulcans_count
+
+print(f"Wulkanów na literę 'E' jest w zbiorze {vulcans_E_count}. Stanowi to ~{result:.2f}% wszystkich wulkanów.")
+
+# Wyfiltrujmy tylko te rzeki, których długość wynosi ponad 4000 km. Wykorzystajmy do tego zawarte pole w danych "długość", a nie liczoną długość geometrii
+
+print(rivers.długość.head()) # Jaka jest różnica między rivers.długość a dotychczas używanym zapisie rivers["długość"] ?
+
+# Standaryzacja danych:
+print(rivers["długość"].isna().sum()) # Czy mamy puste wartości?
+rivers["długość_stand"] = rivers["długość"]
+rivers["długość_stand"] = rivers["długość_stand"].fillna(0)
+
+rivers["długość_stand"] = (
+    rivers["długość_stand"].astype(str)
+    .str.replace("km", "", regex=False)
+    .str.replace(r"\s+", "", regex=True)
+) # Usunięcie białych znaków czy jednostki "km"
+
+rivers["długość_stand"] = rivers["długość_stand"].astype(int)
+
+# Warunek na długość ponad 4000 km:
+rivers4000 = rivers[rivers["długość_stand"] > 4000]
+rivers4000_count = len(rivers4000)
+rivers4000_names_as_text = ", ".join(rivers4000.sort_values("długość_stand", ascending=False)["nazwa"])
+
+# Warto zwrócić uwagę na to jak w GeoPandas / Pandas unikamy klasycznych pętli, zamiast tego wykorzystując pracę bezpośrednio na strukturze danych
+# Takie podejście często określamy jako wektoryzację: zamiast ręcznie przetwarzać każdy element, wykonujemy operację na całej serii lub kolumnie
+# Przykład z wykorzystaniem pętli:
+rivers4000_names2 = []
+for river in rivers4000.sort_values("długość_stand", ascending=False)["nazwa"]:
+    rivers4000_names2.append(river)
+rivers4000_names_as_text = ", ".join(rivers4000_names2)
+# Pętle nie są oczywiście złe same w sobie - ale znacznie komplikują zapis, a często nawet zmniejszają wydajnosć operacji.
+# Jesli to możliwe - starajmy się ich unikać pracując z GeoDataFrame
+
+print(f"Ilość rzek o zadeklarowanej długości ponad 4000 km w zbiorze: {rivers4000_count}. Są to: {rivers4000_names_as_text}")
+```
 
 **5. Problemy do samodzielnego rozwiązania:**
 
+<ol type="a">
+  <li>Dla warstwy z rzekami policz ile jest obiektów których MultiLineString zawiera dokładnie między 2 a 10 części składowych geometrii</li>
+  <li>Dla warstwy demograficznej wyświetl na mapie kraje, w których odsetek osób w wieku 65+ wynosi ponad 18%</li>
+  <li>Dla warstwy z wulkanami stwórz podzbiór wulkanów znajdujących się w Stanach Zjednoczonych. Następnie wypisz wszystkie typy wulkanów występujące w tym podzbiorze oraz oblicz, jaki procent wszystkich wulkanów w USA stanowi każdy z typów</li>
+</ol>
 
 **6. Rozbudowa VectorTools:**
 
