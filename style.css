@@ -46,6 +46,11 @@ body {
         content: counter(questions) ". ";
         font-weight: bold;
     }
+
+    a,
+    a:visited {
+        color: #0077cc;
+    }
 }
 
 .sidebar {

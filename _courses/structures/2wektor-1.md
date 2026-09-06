@@ -14,7 +14,23 @@ Geopandas jest bezpośrednim rozszerzeniem możliwości "zwykłego" Pandas - log
 
 **Dane do ćwiczeń**
 
-* [Dane punktowe o wulkanach na świecie]( {{ '/dane/wulkany.zip' | relative_url }} )
+<ul>
+    <li>
+        <a href="{{ '/dane/wulkany.zip' | relative_url }}">
+            Dane o wulkanach na świecie - w różnych formatach
+        </a>
+    </li>
+    <li>
+        <a href="{{ '/dane/hr1.geojson' | relative_url }}" download>
+            Dane o rzekach na świecie
+        </a>
+    </li>
+    <li>
+        <a href="{{ '/dane/lsp1.geojson' | relative_url }}" download>
+            Dane demograficzne o odsetku społeczeństwa w wieku 65+ na świecie
+        </a>
+    </li>
+</ul>
 
 <small>*Źródło danych: https://mapplab.pl + opracowanie własne*</small>
 
@@ -89,3 +105,44 @@ legend.set_bbox_to_anchor((1, 0.9))
 
 plt.show()
 ```
+
+**3. Jak odczytywać różne typy geometrii danych?**
+
+```python
+path_to_files = "../dane/"
+
+vulcans = geojson_v
+rivers = gpd.read_file(path_to_files+"hr1.geojson")
+demography = gpd.read_file(path_to_files+"lsp1.geojson")
+
+print(vulcans.geom_type.unique()) # Co się stanie jeśli pominiemy .unique() ?
+print(rivers.geom_type.unique())
+print(demography.geom_type.unique())
+# Czym różni się MultiPoint / MultiLineString / MultiPolygon od Point / LineString / Polygon ?
+
+# Dla Demography, policzmy które kraje w zbiorze składają się z największej ilości poligonów:
+demography["liczba_poligonow"] = demography.geometry.apply(lambda geom: len(geom.geoms))
+
+ranking = (
+    demography[["nazwa", "liczba_poligonow"]]
+    .sort_values("liczba_poligonow", ascending=False)
+)
+
+print(ranking[:10])
+
+# Czy 1 miejsce w rankingu rzeczywiście ma aż tyle elementów składowych? Potwierdzmy to sobie wizualnie:
+
+print(ranking.iloc[0])
+
+subGdf = demography.loc[[ranking.iloc[0].name]]
+subGdf.plot()
+```
+
+**4. Jak filtrować dane?**
+
+
+**5. Problemy do samodzielnego rozwiązania:**
+
+
+**6. Rozbudowa VectorTools:**
+
