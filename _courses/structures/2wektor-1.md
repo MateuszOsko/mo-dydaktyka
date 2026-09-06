@@ -182,7 +182,7 @@ rivers4000_names_as_text = ", ".join(rivers4000.sort_values("długość_stand", 
 rivers4000_names2 = []
 for river in rivers4000.sort_values("długość_stand", ascending=False)["nazwa"]:
     rivers4000_names2.append(river)
-rivers4000_names_as_text = ", ".join(rivers4000_names2)
+rivers4000_names_as_text2 = ", ".join(rivers4000_names2)
 # Pętle nie są oczywiście złe same w sobie - ale znacznie komplikują zapis, a często nawet zmniejszają wydajnosć operacji.
 # Jesli to możliwe - starajmy się ich unikać pracując z GeoDataFrame
 
