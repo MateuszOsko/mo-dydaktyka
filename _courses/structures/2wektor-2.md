@@ -105,14 +105,104 @@ Podane informacje są tylko przykładem możliwości informacji jakie wyciągną
 **4. Jak zarządzać układem współrzędnych danych?**
 
 
-**5. Jak zarządzać wieloma warstwami w jednym obiekcie?**
+```python
+# Wiemy już że układ współrzędnych danych możemy sprawdzić za pomocą:
+print(cities.crs)
+# Możemy też:
+print(cities.crs.name)
+print(cities.crs.to_epsg())
+
+# Jeśli dane nie mają przypisanego układu, można zrobić to poprzez:
+cities.set_crs("EPSG:4326", inplace=True) # Co robi parametr inplace, dostępny przy wielu metodach gpd? 
+print(cities.crs) 
+# Dlaczego set_crs nie jest transformacją układu?
+
+# Transformacja:
+print(rivers.iloc[0].geometry.length)
+rivers2 = rivers.to_crs("EPSG:2180")
+print(rivers2.iloc[0].geometry.length)
+```
+
+
+**5. Jak zarządzać wieloma warstwami w jednym pliku?**
+
+```python
+# Niektóre struktury danych pozwalają na przechowywanie wielu warstw w jednym pliku. Na początek wymuśmy taki obiekt poprzez stworzenie pliku .gpkg
+cities.to_file(
+    "polska.gpkg",
+    layer="miasta"
+)
+
+rivers.to_file(
+    "polska.gpkg",
+    layer="rzeki"
+)
+
+zones.to_file(
+    "polska.gpkg",
+    layer="pasy_ukształtowania"
+)
+
+# Możemy zbadać taki obiekt:
+print(gpd.list_layers("polska.gpkg"))
+
+# Jeśli jednak spróbujemy go załadować...
+pl = gpd.read_file(
+    "polska.gpkg"
+) # Co będzie wynikiem takiej operacji?
+print(pl.head())
+
+# Możemy bezpośrednio wskazywać na warstwy które chcemy wczytywać:
+rivers3 = gpd.read_file(
+    "polska.gpkg",
+    layer="rzeki"
+)
+print (rivers3.head())
+```
 
 
 **6. Czym jest GeometryCollection?**
 
+```python
+from shapely import GeometryCollection, Point, LineString, Polygon
+# Jaka jest relacja shapely do gdf?
+
+geometry = GeometryCollection([
+    Point(0, 0),
+    LineString([(1, 1), (2, 2)]),
+    Polygon([(3, 3), (3, 4), (4, 4), (4, 3)])
+])
+
+print(geometry)
+print(geometry.geom_type)
+
+# Możemy też zbudować w oparciu o taką geometrię instancję GeoDataFrame:
+gdf = gpd.GeoDataFrame(
+    geometry=[geometry],
+    crs="EPSG:4326"
+)
+print(gdf)
+print(gdf.geom_type)
+
+# Lub:
+gdf2 = gpd.GeoDataFrame(
+    geometry=list(geometry.geoms),
+    crs="EPSG:4326"
+)
+print(gdf2)
+print(gdf2.geom_type)
+```
+
 
 **7. Problemy do samodzielnego rozwiązania:**
+
+<ol type="a">
+  <li>Dla warstwy z pasami ukształtowania policz ich powierzchnie w m2, korzystając z układu epsg:2180</li>
+  <li>Stwórz obiekt Bounding Box dla warstwy z miastami wojewódzkimi, a następnie oblicz jego obwód</li>
+  <li>Dla warstwy z rzekami stwórz nową kolumnę w której wyliczysz liczbę linii (LineString) znajdujących się wewnątrz. Analogicznie stwórz następnie drugą kolumnę w której wyliczysz łączną ilość punktów składających się na geometrię</li>
+</ol>
 
 
 **8. Rozbudowa VectorTools:**
 
+. . .
