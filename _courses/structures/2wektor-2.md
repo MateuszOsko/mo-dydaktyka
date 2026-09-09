@@ -30,7 +30,7 @@ order: 6
 
 **1. Rozgrzewka przed tematem**
 
-Podzieleni na grupy otrzymacie po 1 formacie danych wektorowych do opracownia. Korzystając z wykładów, własnej wiedzy, z innych zajęć, internetu czy AI znajdzcie informacje o sposobie w jaki dany format przechowuje informacje. Znajdzcie przykładowy plik tego formatu i jeśli to możliwe otwórzcie go w różnych edytorach. Czy Wasz VectorTools da radę go otworzyć? Jak wygląda po otworzeniu w VSC/Notatniku?
+Podzieleni na grupy otrzymacie po 1 formacie danych wektorowych do opracownia. Korzystając z wykładów, własnej wiedzy, z innych zajęć, internetu czy AI znajdźcie informacje o sposobie w jaki dany format przechowuje informacje. Znajdźcie przykładowy plik tego formatu i jeśli to możliwe otwórzcie go w różnych edytorach. Czy Wasz VectorTools da radę go otworzyć? Jak wygląda po otworzeniu w VSC/Notatniku?
 
 Zwróćcie uwagę na następujące zagadnienia:
 - Czy dane zapisane są w postaci binarnej czy tekstowej?
@@ -44,7 +44,7 @@ Przygotowane krótkie omówienia będziemy prezentować na zajęciach.
 
 **2. Jak zapisywać załadowane dane do różnych formatów?**
 
-Zapis do pliku odbywa się analogicznie do odczytu - więszkośc formatów wektorowych zapiszemy za pomocą zunifikowanej metody to_file(). Struktura zapisywanych danych jest determinowana przez bibliotekę na podstawie zadeklarowanego rozszerzenia w nazwie pliku.
+Zapis do pliku odbywa się analogicznie do odczytu - większość formatów wektorowych zapiszemy za pomocą zunifikowanej metody to_file(). Struktura zapisywanych danych jest determinowana przez bibliotekę na podstawie zadeklarowanego rozszerzenia w nazwie pliku.
 
 ```python
 import geopandas as gpd
@@ -70,7 +70,7 @@ cities.to_csv("dane.txt", index=False) # Mimo zmiany rozszerzenia na .txt używa
 **3. Jak odczytywać informacje z geometrii?**
 
 ```python
-# Przypomienie - typ geometrii każdego rekordu w Gdf zbadać możemy przez:
+# Przypomnienie - typ geometrii każdego rekordu w Gdf zbadać możemy przez:
 print(cities.iloc[0].geometry.geom_type)
 
 # Dla punktów sprawdzić możemy np:
@@ -199,10 +199,85 @@ print(gdf2.geom_type)
 <ol type="a">
   <li>Dla warstwy z pasami ukształtowania policz ich powierzchnie w m2, korzystając z układu epsg:2180</li>
   <li>Stwórz obiekt Bounding Box dla warstwy z miastami wojewódzkimi, a następnie oblicz jego obwód</li>
-  <li>Dla warstwy z rzekami stwórz nową kolumnę w której wyliczysz liczbę linii (LineString) znajdujących się wewnątrz. Analogicznie stwórz następnie drugą kolumnę w której wyliczysz łączną ilość punktów składających się na geometrię</li>
+  <li>Dla warstwy z rzekami stwórz nową kolumnę w której wyliczysz liczbę linii (LineString) znajdujących się wewnątrz. Analogicznie stwórz następnie drugą kolumnę w której wyliczysz łączną liczbę punktów składających się na geometrię</li>
 </ol>
 
 
 **8. Rozbudowa VectorTools:**
 
-. . .
+Tym razem rozbudowę VectorTools zaczniemy od zbudowania mechanizmu zapisu pliku:
+
+```python
+from tkinter import filedialog, messagebox
+
+from src.data_service import get_layer
+
+
+def save_data():
+    layer = get_layer()
+
+    if layer is None:
+        return
+
+    path = filedialog.asksaveasfilename(
+        title="Zapisz warstwę",
+        defaultextension=".geojson",
+        filetypes=[
+            ("GeoJSON", "*.geojson"),
+            ("GeoPackage", "*.gpkg"),
+            ("Shapefile", "*.shp"),
+            ("CSV", "*.csv")
+        ]
+    )
+
+    if not path:
+        return
+
+    try:
+        if path.endswith(".csv"):
+            layer.to_csv(path, index=False)
+        else:
+            layer.to_file(path)
+
+        messagebox.showinfo(
+            "Zapisano plik",
+            "Warstwa została zapisana poprawnie."
+        )
+
+    except Exception:
+        messagebox.showwarning(
+            "Błąd zapisu",
+            "Nie udało się zapisać warstwy."
+        )
+
+```
+
+I dodaniu wywołania do app.py:
+
+```python
+# Importy...
+window, canvas = create_window()
+
+create_menu_option(canvas, 365, "Wczytaj warstwę", lambda: load_data_and_remember_outcome(), lambda: update_menu(canvas))
+create_menu_option(canvas, 400, "Wyświetl warstwę", lambda: show_layer())
+create_menu_option(canvas, 435, "Wyświetl informacje o warstwie", lambda: show_layer_info())
+create_menu_option(canvas, 470, "Zapisz warstwę", lambda: save_data())
+create_menu_option(canvas, 505, "Zamknij program", lambda: close_program(window))
+
+window.mainloop()
+```
+
+Na tym etapie więc nasza apka ma więc następujące opcje:
+
+![](./img/VT_04.png)
+
+A struktura plików w projekcie wygląda w ten sposób:
+
+![](./img/VT_05.png)
+
+
+Następna paczka ulepszeń do programu będzie już miała charakter **pracy indywidualnej**, bez gotowych fragmentów kodu do przekopiowania.
+Chciałbym abyście spróbowali dokonać 2 następujących usprawnień:
+* Przy zapisie pliku do CSV ustawili świadomie separator na przecinek oraz kodowanie znaków na UTF-8
+  * Wersja dla ambitnych: Niech program zapyta użytkownika o podanie separatora i kodowania wedle uznania!
+* Dodali nową funkcję "Zmień układ wsp." i zaimplementowali jego działanie
