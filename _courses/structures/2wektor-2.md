@@ -5,6 +5,9 @@ course_id: structures
 order: 6
 ---
 
+## Wektor - struktura
+
+
 **Dane do ćwiczeń**
 
 <ul>
