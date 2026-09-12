@@ -8,6 +8,18 @@ order: 7
 ## Wektor - tworzenie obiektów
 
 
+**Dane do ćwiczeń**
+
+<ul>
+    <li>
+        <a href="{{ '/dane/fw2.geojson' | relative_url }}" download>
+            Dane o wyspach na świecie
+        </a>
+    </li>
+</ul>
+
+
+
 **1. Jak tworzyć własne dane punktowe, liniowe i poligony?**
 
 ```python
@@ -132,8 +144,134 @@ gdf.plot()
 
 **3. Jak rozbijać obiekt na nowe, mniejsze elementy?**
 
+GeoDataFrame możemy rozbijać, tworząc w tej sposób nowe elementy, na dwa sposoby: poprzez geometrię oraz poprzez atrybuty.
+
+Dane początkowe:
+```python
+islands = gpd.read_file("../dane/fw2.geojson")
+print(islands.head())
+print(islands.plot())
+```
+
+
+Rozbicie poprzez geometrię:
+```python
+# Do rozbijania geometrii służy funkcja explode():
+print(islands.geom_type.unique())
+print(len(islands))
+
+geoexploded_islands = islands.explode()
+
+print(geoexploded_islands.geom_type.unique())
+print(len(geoexploded_islands))
+
+# Geometrie można potem składać funkcją dissolve(), która - w pewnym sensie - jest przeciwieństwem explode():
+geodissolved_islands = geoexploded_islands.dissolve(by="nazwa")
+print(geodissolved_islands.geom_type.unique())
+print(len(geodissolved_islands))
+
+# Ponieważ len() islands i geodissolved_islands się różnią, sprawmy dlaczego:
+duplicate = islands.loc[
+    islands["nazwa"].duplicated(),
+    "nazwa"
+].unique()
+print(duplicate)
+
+# Dodatkowo inną formą rozbicia jest filtrowanie gdf po warunkach nałożonych na geometrię:
+mean = islands.geometry.area.mean()
+
+large_islands = islands[islands.geometry.area > mean ]
+small_islands = islands[islands.geometry.area <= mean]
+# Jaka jest obecnie największa wada tej implementacji?
+
+large_islands.plot()
+small_islands.plot()
+```
+
+Rozbicie poprzez atrybuty:
+```python
+# Zacznijmy od przykładu stworzenia nowego gdf poprzez filtorwanie atrybutów
+# Z poprzedniej sekcji dowiedzieliśmy się że mamy duplikat ze względu na nazwę. Sprawdźmy to więc dalej:
+
+duplicate_islands = islands[islands["nazwa"] == duplicate[0]]
+print(duplicate_islands.head())
+# Wyjaśnij na czym polega błąd w danych i czym prawdopodobnie został spowodowany?
+
+# Wracając do klasycznego rozbijania - tabelę atrybutów możemy grupować po wartościach, a następnie tworzyć nowe obiekty według grup:
+attrgroup_islands = islands.groupby("ocean")
+
+groups = {}
+for ocean, group in attrgroup_islands:
+    groups[ocean] = group
+
+for ocean, gdf in groups.items():
+    ax = gdf.plot()
+    ax.set_title(ocean)
+# Niektóre dane mogą wymagać czyszczenia - spróbujcie je wystandaryzować i jeszcze raz puścić grupowanie!
+```
 
 **4. Jak wykorzystywać operacje na warstwach by tworzyć nowe geometrie?**
+
+```python
+# Buffer:
+point = gpd.GeoDataFrame(
+    geometry=[Point(100,100)],
+    crs="EPSG:2180"
+)
+
+buffer = point.geometry.buffer(10)
+buffer.plot()
+
+buffer2 = point.geometry.buffer(10, 3)
+buffer2.plot()
+# Jak interpretować drugi parametr (resolution) w buffer?
+
+# Centroid:
+example_island = islands.iloc[[10]]
+example_island.plot()
+
+centroid = example_island.geometry.centroid
+ax = example_island.plot()
+centroid.plot(ax=ax, color="black", marker="*", markersize=100)
+
+# Convex_hull:
+from shapely import MultiPoint
+many_points = gpd.GeoDataFrame(
+    geometry=[
+        MultiPoint([
+            Point(100,100),
+            Point(34, 52),
+            Point(20, 67),
+            Point(105, 120),
+            Point(80,96),
+            Point(100, 62),
+            Point(90,90)
+        ])
+    ],
+    crs="EPSG:2180"
+)
+many_points.plot()
+
+convex_hull = many_points.geometry.convex_hull
+# Czemu buffer był wywoływany z nawiasami () a centroid czy convex_hull już nie? Czym się różnią?
+
+convex_hull.plot()
+# Czym będzie się różnił powstały poligon od poligonu który po prostu został stworzony bezpośrednio z podanych punktów?
+# Np.: Polygon([Point(100,100), Point(34, 52) ....])
+
+# Simplify
+not_simplified = example_island.to_crs("3395")
+
+simplify1 = not_simplified.simplify(2000)
+simplify2 = not_simplified.simplify(5000)
+simplify3 = not_simplified.simplify(10000)
+# Co oznacza wartość parametru?
+
+not_simplified.plot()
+simplify1.plot()
+simplify2.plot()
+simplify3.plot()
+```
 
 
 **5. Problemy do samodzielnego rozwiązania:**
