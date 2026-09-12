@@ -276,5 +276,12 @@ simplify3.plot()
 
 **5. Problemy do samodzielnego rozwiązania:**
 
+<ol type="a">
+  <li>Stwórz warstwę liniową, która po wyświetleniu będzie zawierała pierwsze 3 drukowane litery Twojego imienia i pierwsze 3 drukowane litery Twojego nazwiska. Każda literka powinna być osobnym rekordem w GeoDataFrame</li>
+  <li>Z danych o wyspach stwórz słownik, gdzie kluczem będą nazwy krajów a wartością lista geometrii wysp do nich przypisanych. Następnie stwórz ranking top 10 krajów które mają największą sumaryczną powierzchnię wysp w m2</li>
+  <li>Z danych o wyspach stwórz nowy GeoDataFrame zawierający tylko wyspy Uznam i Wolin. Przeprowadź dla nich 3 wizualizacje różniące się poziomem uproszczenia geometrii. Dla każdego poziomu wypisz: ilość krawędzi (linii) oraz ilość wierzchołków (punktów) z których się składa</li>
+</ol>
+
 
 **6. Rozbudowa VectorTools:**
+
