@@ -84,6 +84,82 @@ print(len(lakes_in_europe2))
 
 **2. W jaki sposób możemy wykonywać operacje na wielu warstwach?**
 
+Do wykonywania operacji przestrzennych na wielu warstwach służy funkcja overlay(), przyjmująca rodzaj operacji jako parametr.
+
+```python
+# Poniżej przykłady dla intersection, difference, union, symmetric difference
+# Czym różnią się te operacje, co oznaczają ich wyniki?
+africa = continents[continents["nazwa"] == "Afryka"]
+
+# Intersection
+lakes_in_africa = gpd.overlay(
+    lakes,
+    africa,
+    how="intersection"
+)
+
+print(len(lakes_in_africa))
+lakes_in_africa.plot()
+plt.show()
+
+
+# Difference
+lakes_outside_africa = gpd.overlay(
+    lakes,
+    africa,
+    how="difference"
+)
+
+print(len(lakes_outside_africa))
+lakes_outside_africa.plot()
+plt.show()
+
+
+# Union
+lakes_and_africa = gpd.overlay(
+    lakes,
+    africa,
+    how="union"
+)
+
+print(len(lakes_and_africa))
+lakes_and_africa.plot()
+plt.show()
+
+
+# Symmetric difference
+lakes_or_africa = gpd.overlay(
+    lakes,
+    africa,
+    how="symmetric_difference"
+)
+
+print(len(lakes_or_africa))
+lakes_or_africa.plot()
+plt.show()
+```
+
+Innym rodzajem przydatnej operacji jest przepisanie atrybutów po lokalizacji, wykonywane poprzez sjoin() (spatial join). Poniżej stworzenie i uzupełnienie kolumny "Kontynent" na podstawie danych.
+
+```python
+# Połączenie atrybutów dwóch warstw w jedno po warunku przestrzennym:
+lakes_with_continent = gpd.sjoin(
+    lakes,
+    continents,
+    predicate="within"
+)
+print(lakes_with_continent.head())
+
+# Wersja z dodaniem tylko 1 kolumny do oryginalnych danych:
+lakes["kontynent"] = gpd.sjoin(
+    lakes,
+    continents,
+    predicate="within"
+)["nazwa_right"] # Warto zwrócić uwagę na dodane '_right' do kolumny
+
+print(lakes.head())
+```
+
 
 **3. W jaki sposób możemy łączyć wiele warstw w jedną?**
 
