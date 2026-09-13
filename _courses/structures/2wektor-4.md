@@ -13,12 +13,17 @@ order: 8
 
 <ul>
     <li>
-        <a href="{{ '/dane/hj1.geojson' | relative_url }}" download>
+        <a href="{{ '/dane/pg3.geojson' | relative_url }}" download>
             Dane o kontynentach
         </a>
     </li>
     <li>
-        <a href="{{ '/dane/pg3.geojson' | relative_url }}" download>
+        <a href="{{ '/dane/pg2.geojson' | relative_url }}" download>
+            Dane o państwach
+        </a>
+    </li>
+    <li>
+        <a href="{{ '/dane/hj1.geojson' | relative_url }}" download>
             Dane o jeziorach na świecie
         </a>
     </li>
@@ -163,8 +168,67 @@ print(lakes.head())
 
 **3. W jaki sposób możemy łączyć wiele warstw w jedną?**
 
+Podstawowy sposób łączenia danych, zarówno w Pandas jak i GeoPandas, to funkcja concat()
+
+```python
+import pandas as pd
+
+# Przyjmijmy 3 osobne obiekty:
+europe = continents[continents["nazwa"] == "Europa"]
+africa = continents[continents["nazwa"] == "Afryka"]
+asia = continents[continents["nazwa"] == "Azja"]
+
+# Możemy je połączyć za pomocą pd.concat():
+
+continents_selected = gpd.GeoDataFrame(
+    pd.concat(
+        [europe, africa, asia],
+        ignore_index=True
+    ),
+    crs=continents.crs
+)
+
+print(continents_selected.head())
+
+continents_selected.plot()
+
+# Co się stanie jeśli wykonamy tą samą operację ale bez dodania "ignore_index=True" ?
+```
+
+Inną funkcją którą warto znać w tym temacie jest union_all().
+
+```python
+# Przed połączeniem geometrii za pomocą union_all należy upewnić się czy topologia jest prawidłowa - jeśli nie, możemy spróbować naprawić ją automatycznie:
+print(continents_selected.geometry.is_valid)
+
+continents_selected["geometry"] = (
+    continents_selected.geometry.make_valid()
+)
+print(continents_selected.geometry.is_valid)
+
+# Następnie możemy przejść już do połączenia:
+continents_geometry = continents_selected.geometry.union_all()
+print(type(continents_geometry)) # Jakiego typu będzie ta zmienna?
+
+union_continents = gpd.GeoSeries(
+    [continents_geometry],
+    crs=continents_selected.crs
+)
+
+union_continents.plot()
+plt.show()
+union_continents.head()
+# Czym różnią się te wyniki od tych uzyskanych wcześniej przez concat() ?
+```
+
 
 **4. Problemy do samodzielnego rozwiązania:**
+
+<ol type="a">
+  <li>Pobierz dane o państwach i wykorzystując relacje przestrzenne z warstwą o kontynentach, wypisz wszystkie państwa które mają swoje fragmenty w przynajmniej 2 różnych kontynentach</li>
+  <li>Stwórz nowy GeoDataFrame który będzie zawierał w sobie jeziora znajdujące się - przynajmniej częściowo - w Chinach lub Mongolii. Dane te powinny zawierać wszystkie oryginalne atrybuty warstwy z jeziorami + dodatkowo kolumnę "Kraj" wypełnioną nazwą przeniesioną z warstwy z państwami</li>
+  <li>Samodzielnie wypróbuj kolejną metodę działania na 2 warstwach - clip(). Używając dokumentacji, AI oraz własnej wiedzy wytłumacz jak działa i zaprezentuj jej działanie w geopandas przycinając warstwę z jeziorami do granic Stanów Zjednoczonych</li>
+</ol>
 
 
 **5. Rozbudowa VectorTools:**
