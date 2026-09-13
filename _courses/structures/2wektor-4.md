@@ -232,3 +232,7 @@ union_continents.head()
 
 
 **5. Rozbudowa VectorTools:**
+
+Dalsza rozbudowa VectorTools powinna zawierać:
+* Dodanie nowej funkcji pozwalającej na clipowanie warstwy (trzeba wskazać w jej ramach 2gą warstwę i przyciąć nią tą załadowaną już w programie)
+* Wszelkie udoskonalenia estetyczne jakich wam brakuje. Zachęcam do korzystania z narzędzi AI, stackoverlow czy dokumentacji w internecie. Nasz VectorTools jest bardzo prototypowym narzędziem, dlatego nie musi wyglądać idealnie, ale warto poświęcić jeszcze chwilę jego funkcjonowaniu nim przejdziemy do pracy z rastrami.
