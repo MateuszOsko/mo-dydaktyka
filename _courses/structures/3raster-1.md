@@ -7,6 +7,10 @@ order: 9
 
 ## Raster - podstawy
 
+**Dane do ćwiczeń**
+
+. . .
+
 
 **1. Jak odczytywać i wyświetlać dane rastrowe pochodzące z 1 pliku?**
 
