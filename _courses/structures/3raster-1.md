@@ -9,7 +9,20 @@ order: 9
 
 **Dane do ćwiczeń**
 
-. . .
+<ul>
+    <li>
+        <a href="{{ '/dane/raster/tucholski_fragment.tif' | relative_url }}" download>
+            Zobrazowanie RGB fragmentu lasów w okolicach Tucholi
+        </a>
+    </li>
+    <li>
+        <a href="{{ '/dane/raster/wybrzeze.zip' | relative_url }}" download>
+            Zobrazowanie wielokanałowe (Sentinel-2) fragmentu polskiego wybrzeża
+        </a>
+    </li>
+</ul>
+
+<small>*Źródło danych: https://www.quickmaptools.com/download-satellite-imagery + opracowanie własne*</small>
 
 
 **1. Jak odczytywać i wyświetlać dane rastrowe pochodzące z 1 pliku?**
@@ -89,3 +102,28 @@ plt.axis("off")
 plt.show()
 # Jakie obrazy wyszłyby gdybyśmy zmienili zakres normalizacji #2 z 2-98 na inne percentyle?
 ```
+
+
+**3. Jak przeprowadzać inspekcje rastra oraz wyciągać podstawowe statystyki?**
+
+. . .
+
+
+**4. Jak badać przestrzenne właściwości rastra?**
+
+. . .
+
+
+**5. Jak zapisywać dane rastrowe do pliku?**
+
+. . .
+
+
+**6. Problemy do samodzielnego rozwiązania:**
+
+. . .
+
+
+**7. Stworzenie RasterTools:**
+
+. . .
