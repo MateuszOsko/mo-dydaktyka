@@ -199,9 +199,25 @@ with rasterio.open(
 
 **6. Problemy do samodzielnego rozwiązania:**
 
-. . .
+Wejdz na stronę https://www.quickmaptools.com/download-satellite-imagery i pobierz własny dowolnie wybrany raster (Sentinel-2) w kanałach RGB. Za pomocą rasterio wykonaj dla niego następujące zadania:
+<ol type="a">
+  <li>Wyświetl raster w kolorach możliwie odzwierciedlających rzeczywistość</li>
+  <li>Przedstaw i krótko opisz histogram wartości dla każdego kanału</li>
+  <li>Podziel wartości rastra na 9 równych części (3 x 3), a następnie podaj współrzędne w układzie odniesienia rastra środka każdej z tych części</li>
+  <li>Zapisz raster do 1 pliku RGB złożonego z zaciągniętych 3 kanałów</li>
+</ol>
 
 
 **7. Stworzenie RasterTools:**
 
-. . .
+Nie będziemy tworzyć RasterTools od zera - wykorzystamy już istniejący projekt VectorTools. Możemy albo połączyć to w jedno narzędzie (i np. przemianować je na GeoTools) albo skopiować cały kod źródłowy i zbudować analogiczny drugi program.
+
+
+Jeśli zdecydujemy się skopiować kod, to w wersji RasterTools usunąć musimy wszystkie operacje dla wektora (może poza zamknięciem programu) i zacząć pisać nowe własne. Jeśli chcemy zaś utrzymać 1 program, będziemy musieli do wybranych istniejących operacji (np wczytania plików) dodać rozpoznawanie formatu na podstawie którego zdecydujemy czy chcemy wykorzystać funkcje związane z biblioteką geopandas czy rasterio. Wybór zostawiam wam.
+
+
+Niezależnie od tego, powstała aplikacja powinna mieć funkcje:
+- Wczytania rastra (może być na razie w ograniczeniu do tylko 1 kanału na raz)
+- Zapisu rastra (z zapamiętanym profile z wczytanego rastra)
+- Wyświetlenia podstawowych informacji i metadanych o rastrze
+- Wyświetlania rastra (proste - bez normalizacji czy modyfikacji)
