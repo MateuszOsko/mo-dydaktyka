@@ -106,17 +106,95 @@ plt.show()
 
 **3. Jak przeprowadzać inspekcje rastra oraz wyciągać podstawowe statystyki?**
 
-. . .
+```python
+# Wykorzystując pobrane do numpy dane, możemy określić wiele statystyk:
+
+print(raster_rgb2.shape) # To już robiliśmy wyżej
+
+print(raster_rgb2.dtype)
+print(raster_rgb2.min()) 
+print(raster_rgb2.max())
+
+# Średnia wartość:
+print(raster_rgb2.mean()) 
+print(raster_rgb2[:, :, 0].mean())
+print(raster_rgb2[:, :, 1].mean())
+print(raster_rgb2[:, :, 2].mean())
+# Czym się różnią powyższe średnie?
+
+# Analogicznie można badać np. medianę czy odchylenie standardowe:
+print(np.median(raster_rgb2))
+print(np.std(raster_rgb2))
+# Jak różniłyby się rozkłady per poszczególny kanał?
+
+# Przykładowy histogram:
+plt.hist(raster_rgb2[:, :, 0].flatten(), bins=50)
+plt.title("Histogram kanału czerwonego")
+plt.show()
+
+# Przykładowy histogram przed normalizacją:
+plt.hist(raster_rgb[:, :, 0].flatten(), bins=50)
+plt.title("Histogram kanału czerwonego")
+plt.show()
+# Dlaczego normalizacja aż tak zmienia wyniki histogramu? Jak wyglądałoby to dla innych kanałów?
+```
 
 
 **4. Jak badać przestrzenne właściwości rastra?**
 
-. . .
+```python
+# Wysokość czy szerokość rastra wyciągnąć możemy ze znanego już nam raster_rgb2.shape
+# Niektóre informacje można jednak pobrać tylko bezpośrednio z pliku, a nie z numpy array. Dlaczego?
+with rasterio.open(path2 + "B04.tif") as src:
+    print(src.nodata)
+    print(src.crs)
+    print(src.bounds)
+    print(src.res)
+    print(src.transform)
+    # Jak rozumieć powyższe wartości?
+
+    # Wykorzystując dostęp do plików możemy też przepytywać dane pod względem współrzędnych:
+    print(src.xy(100, 100))
+    print(src.index(658000, 6074300))
+```
 
 
 **5. Jak zapisywać dane rastrowe do pliku?**
 
-. . .
+```python
+rgb_to_save = np.moveaxis(raster_rgb2, -1, 0)
+
+# Wersja zapisu #1:
+with rasterio.open(
+    "rgb_output1.tif",
+    "w",
+    driver="GTiff",
+    height=rgb_to_save.shape[1],
+    width=rgb_to_save.shape[2],
+    count=3,
+    dtype=rgb_to_save.dtype
+) as dst:
+    dst.write(rgb_to_save)
+
+# Wersja zapisu #2:
+with rasterio.open(path2 + "B04.tif") as src:
+    profile = src.profile
+    print(profile)
+
+    profile.update(
+        count=3,
+        dtype=rgb_to_save.dtype
+    )
+
+with rasterio.open(
+    "rgb_output2.tif",
+    "w",
+    **profile # Rozpakowanie słownika
+) as dst:
+    dst.write(rgb_to_save)
+
+# Czym różnią się obie wersje? Czy wynikowy plik będzie identyczny?
+```
 
 
 **6. Problemy do samodzielnego rozwiązania:**
