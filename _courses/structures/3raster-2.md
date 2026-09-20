@@ -105,7 +105,17 @@ with rasterio.open(path_to_files+"DEM_kotlina_klodzka.tif") as src:
 Modyfikowanie:
 
 ```python
+# Wartości rastra możemy nadpisywać bezpośrednio - punktowo lub w przedziale:
+dem[0][100, 200] = 300
+print(dem[0][100, 200])
 
+dem[0][100:110, 200:210] = 300
+
+# Możemy też wykorzystywać warunki:
+dem[0][dem[0] > 300] = 300 # Zwrócmy uwagę na brak konieczności pisania pętli
+
+# Lub w bardziej eleganckiej formie:
+dem_modified = np.where(dem[0] > 300, 300, dem[0]) # Co oznacza ten zapis?
 ```
 
 **3. Na czym polega i jak wykonać transformacje rastra?**
