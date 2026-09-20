@@ -15,8 +15,13 @@ order: 10
         <a href="{{ '/dane/raster/DEM_kotlina_klodzka.tif' | relative_url }}" download>
             DEM obszaru Kotliny Kłodzkiej
         </a>
+        <a href="{{ '/dane/raster/praga.png' | relative_url }}" download>
+            Zrzut ekranu kawałka mapy zawierającej centrum Pragi
+        </a>
     </li>
 </ul>
+
+<small>*Źródło danych: https://www.quickmaptools.com/download-satellite-imagery + https://mapgridder.com/map + opracowanie własne*</small>
 
 
 **0. Rozgrzewka przed tematem**
@@ -120,12 +125,182 @@ dem_modified = np.where(dem[0] > 300, 300, dem[0]) # Co oznacza ten zapis?
 
 **3. Na czym polega i jak wykonać transformacje rastra?**
 
-. . .
+Geotransformaty. Modyfikacja wielkości siatki.
+
+```python
+# Geotransformaty:
+with rasterio.open(path_to_files+"DEM_kotlina_klodzka.tif") as src:
+    transform = src.transform
+
+    print(transform.a)
+    print(transform.b)
+    print(transform.c)
+    print(transform.d)
+    print(transform.e)
+    print(transform.f)
+    # Co oznacza każdy z nich?
+
+# Zmiana rozdzielczości rastra - 40-krotne zmniejszenie ilości pikseli w kolumnach oraz wierszach:
+
+from rasterio.enums import Resampling
+from rasterio.plot import plotting_extent
+
+with rasterio.open(path_to_files+"DEM_kotlina_klodzka.tif") as src:
+    dem = src.read(1, masked=True)
+
+    # Zmniejszenie liczby pikseli 40 razy w każdym wymiarze
+    new_width = src.width // 40
+    new_height = src.height // 40
+
+    # Nowa geotransformacja
+    new_transform = src.transform * src.transform.scale(
+        src.width / new_width,
+        src.height / new_height
+    )
+
+    # Przeskalowanie wartości rastra
+    dem_resampled = src.read(
+        out_shape=(src.count, new_height, new_width),
+        resampling=Resampling.bilinear
+    )[0]
+
+# Zasięgi przestrzenne
+original_extent = plotting_extent(
+    dem,
+    transform=src.transform
+)
+
+new_extent = plotting_extent(
+    dem_resampled,
+    transform=new_transform
+)
+
+# Zobrazowanie
+fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+
+axes[0].imshow(
+    dem,
+    extent=original_extent,
+    cmap="terrain"
+)
+axes[0].set_title(
+    f"Oryginał: {src.width} × {src.height}"
+)
+
+axes[1].imshow(
+    dem_resampled,
+    extent=new_extent,
+    cmap="terrain"
+)
+axes[1].set_title(
+    f"Po zmniejszeniu: {new_width} × {new_height}"
+)
+
+plt.show()
+
+# Do tego przykładu użyty został algorytm Resampling.bilinear . Jak zmiana tego wyboru wpłynęłaby na wyniki?
+```
+
+Pełna reprojekcja:
+
+```python
+from rasterio.warp import calculate_default_transform, reproject
+
+with rasterio.open(path_to_files+"DEM_kotlina_klodzka.tif") as src:
+
+    new_crs = "EPSG:2180"
+
+    new_transform, new_width, new_height = calculate_default_transform(
+        src.crs,
+        new_crs,
+        src.width,
+        src.height,
+        *src.bounds
+    )
+
+    dem_reprojected = np.empty((new_height, new_width), dtype=src.dtypes[0])
+
+    reproject(
+        source=src.read(1, masked=True),
+        destination=dem_reprojected,
+        src_transform=src.transform,
+        src_crs=src.crs,
+        dst_transform=new_transform,
+        dst_crs=new_crs,
+        resampling=Resampling.bilinear
+    )
+    # Co oznacza każdy z wypisanych tu parametrów reproject()?
+
+plt.imshow(dem_reprojected, cmap="terrain")
+plt.show()
+```
 
 
 **4. Jak wczytywać niegeograficzne dane obrazowe i dokonywać ich georeferencji?**
 
-. . .
+W tym przykładzie wczytamy i zgeoreferencjujemy przykład zrzutu ekranu z mapy, zapisanego w formie zwykłego pliku .png .
+Dane są współrzędne granic obrazu:
+Szerokość geo.: 50°00'N - 50°10'N
+Długość geo.: 14°20'E - 14°30'E
+
+```python
+from PIL import Image
+from rasterio.transform import from_bounds
+
+# Na początek załadujmy nasz .png i zobaczmy jak wygląda.
+
+image = np.array(Image.open(path_to_files+"praga.png"))
+print(image.shape) # Czego się z tego dowiadujemy?
+
+plt.imshow(image)
+plt.show()
+
+# Teraz zmieńmy go w pełnoprawne dane GIS:
+with rasterio.open(path_to_files+"praga.png") as src:
+    image = src.read()
+
+    # Zachowujemy tylko kanały RGB
+    image = image[:3]
+
+    height = src.height
+    width = src.width
+
+    left = 14 + 20/60
+    bottom = 50
+    right = 14 + 30/60
+    top = 50 + 10/60
+
+    transform = from_bounds(
+        left,
+        bottom,
+        right,
+        top,
+        width,
+        height
+    )
+
+    print(transform.a)
+    print(transform.b)
+    print(transform.c)
+    print(transform.d)
+    print(transform.e)
+    print(transform.f)
+
+with rasterio.open(
+    "praga_georef.tif",
+    "w",
+    driver="GTiff",
+    height=height,
+    width=width,
+    count=3,
+    dtype=image.dtype,
+    crs="EPSG:4326",
+    transform=transform
+) as dst:
+    dst.write(image)
+```
+
+Następnie powstały raster wrzućić można do QGIS i sprawdzić czy georeferencja pasuje do podkładu mapowego.
 
 
 **5. Problemy do samodzielnego rozwiązania:**
