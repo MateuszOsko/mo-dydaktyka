@@ -15,8 +15,10 @@ order: 10
         <a href="{{ '/dane/raster/DEM_kotlina_klodzka.tif' | relative_url }}" download>
             DEM obszaru Kotliny Kłodzkiej
         </a>
+    </li>
+    <li>
         <a href="{{ '/dane/raster/praga.png' | relative_url }}" download>
-            Zrzut ekranu kawałka mapy zawierającej centrum Pragi
+            Zrzut ekranu fragmentu mapy obejmującego centrum Pragi
         </a>
     </li>
 </ul>
@@ -300,14 +302,20 @@ with rasterio.open(
     dst.write(image)
 ```
 
-Następnie powstały raster wrzućić można do QGIS i sprawdzić czy georeferencja pasuje do podkładu mapowego.
+Następnie powstały raster wrzucić można do QGIS i sprawdzić czy georeferencja pasuje do podkładu mapowego.
 
 
 **5. Problemy do samodzielnego rozwiązania:**
 
-. . .
+<ol type="a">
+  <li>Przygotuj 4 zestawy próbek z DEM Kotliny Kłodzkiej: 3 losowe próbki, 30, 300 i 3000. Następnie dla każdego zbioru oblicz średnią wysokość. Porównaj ją ze średnią wysokością całego zbioru. </li>
+  <li>Znajdz najwyższy punkt obszaru a następnie podaj jego współrzędne geograficzne (x,y).</li>
+  <li>Podaj granice najmniejszego możliwego prostokąta który obejmuje wszystkie wartości powyżej 1000 m n.p.m. wewnątrz obszaru. Granice niech będą wyrażone w indeksie wierszy i kolumn oraz we współrzędnych geograficznych.</li>
+  <li>Wykorzystując narzędzie nałożenia siatki na https://mapgridder.com/map zrób zrzut ekranu dowolnego obszaru na ziemi a następnie dokonaj jego georeferencji i wyświetl w QGIS.</li>
+</ol>
 
 
 **6. Rozbudowa RasterTools:**
 
-. . .
+Do RasterTools dodajmy tym razem tylko 1 nowy obowiązkowy element:
+* Nową operację umożliwiającą reprojekcję po wpisaniu EPSG układu współrzędnych
