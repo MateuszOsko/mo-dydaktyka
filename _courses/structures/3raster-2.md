@@ -80,8 +80,33 @@ print(dem1.mask.sum())
 
 **2. Jak próbkować i modyfikować wartości rastrów?**
 
-. . .
+Próbkowanie:
 
+```python
+# Najprostszy sposób próbkowania rastra to po prostu:
+print(dem[0][100, 200]) # Co oznacza tu 0, a co 100 i 200?
+print(dem[0][100:105, 200:205])
+
+# Przypomnienie, że możemy też poza wartościami odczytywać współrzędne:
+with rasterio.open(path_to_files+"DEM_kotlina_klodzka.tif") as src:
+    print(src.xy(100, 200))
+
+# Jeśli zamiast indeksów chcemy wyjść od współrzędnych by odczytać wartości rastra, możemy to zrobić poprzez:
+with rasterio.open(path_to_files+"DEM_kotlina_klodzka.tif") as src:
+    points = [(16.85, 50.45), (16.85, 50.55)]
+    print(list(src.sample(points)))
+
+    # Albo w nieco bardziej elegancki sposób wyświetlania:
+    values = list(src.sample(points))
+    for point, value in zip(points, values): #iterowanie po 2 listach
+        print(point, ' -> ', value[0])
+```
+
+Modyfikowanie:
+
+```python
+
+```
 
 **3. Na czym polega i jak wykonać transformacje rastra?**
 
