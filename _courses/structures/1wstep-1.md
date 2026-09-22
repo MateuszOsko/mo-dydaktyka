@@ -37,6 +37,7 @@ Biblioteki jakie warto sobie zainstalować na start:
 * *geopandas*
 * *matplotlib*
 * *tkinter*
+* *rasterio*
 
 
 **IDE**
