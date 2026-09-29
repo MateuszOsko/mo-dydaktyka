@@ -240,4 +240,12 @@ body {
             display: block;
         }
     }
+
+    .contact {
+        font-size: 12px;
+        bottom: 10px;
+        left: 10px;
+        position: fixed;
+        color: dimgray;
+    }
 }
