@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Raster - Przetwarzanie
-course_id: structures
+course_id: algorithms
 order: 10
 ---
 

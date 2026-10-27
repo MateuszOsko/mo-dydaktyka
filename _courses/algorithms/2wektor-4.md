@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Wektor - Łączenie danych
-course_id: structures
+course_id: algorithms
 order: 8
 ---
 
