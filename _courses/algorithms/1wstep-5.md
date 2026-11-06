@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Wektor - Łączenie danych
+title: Wstęp - RasterTools
 course_id: algorithms
 order: 8
 ---
