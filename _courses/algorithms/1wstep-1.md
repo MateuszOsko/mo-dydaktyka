@@ -2,8 +2,10 @@
 layout: default
 title: Wstęp - RasterTools
 course_id: algorithms
-order: 8
+order: 1
 ---
+
+## Wstęp
 
 **1. Stworzenie RasterTools:**
 

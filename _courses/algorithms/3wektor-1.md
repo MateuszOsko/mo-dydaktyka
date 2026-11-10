@@ -2,7 +2,7 @@
 layout: default
 title: Wektor - Łączenie danych
 course_id: algorithms
-order: 3
+order: 5
 ---
 
 ## Wektor - łączenie danych

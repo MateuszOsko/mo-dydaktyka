@@ -2,7 +2,7 @@
 layout: default
 title: Raster - Przetwarzanie
 course_id: algorithms
-order: 10
+order: 2
 ---
 
 ## Raster - przetwarzanie
